@@ -8,38 +8,36 @@ public class Main {
         int testCases = scanner.nextInt();
         
         while (testCases > 0) {
-            int tam = scanner.nextInt();
-            scanner.nextLine(); // Limpar o buffer
+            int n = scanner.nextInt();
             
-            int[] ordem = new int[tam];
-            String[] entrada = scanner.nextLine().split(" ");
-            for (int i = 0; i < tam; i++) {
-                ordem[i] = Integer.parseInt(entrada[i]);
+            int[] vertices = new int[n];
+            for (int i = 0; i < n; i++) {
+                vertices[i] = scanner.nextInt();
             }
             
-            System.out.println(minimalHeightTree(ordem));
+            System.out.println(minimalHeightTree(vertices));
             testCases--;
         }
         
         scanner.close();
     }
 	
-    public static int minimalHeightTree(int[] ordem) {
-        int contador = 1;
-        int altura = 1, atual = 0;
+    public static int minimalHeightTree(int[] vertices) {
+        int count = 1;
+        int height = 1, current = 0;
         
-        for (int i = 1; i < ordem.length; i++) {
-            if (ordem[i] < ordem[i - 1]) {
-                contador--;
-                if (contador == 0) {
-                    altura++;
-                    contador = atual;
-                    atual = 0;
+        for (int i = 1; i < vertices.length; i++) {
+            if (vertices[i] < vertices[i - 1]) {
+                count--;
+                if (count == 0) {
+                    height++;
+                    count = current;
+                    current = 0;
                 }
             }
-            atual++;
+            current++;
         }
         
-        return altura;
+        return height;
     }
 }
