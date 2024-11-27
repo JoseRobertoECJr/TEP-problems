@@ -13,55 +13,57 @@ public static class Program
         l = int.Parse(input[1]);
         k = int.Parse(input[2]);
 
-        var signs = new long[n + 2];
+        var signs = new long[n + 1];
         var signsInput = Console.ReadLine().Split().Select(el => long.Parse(el)).ToArray();
         Array.Copy(signsInput, 0, signs, 1, signsInput.Length);
-        signs[n + 1] = l;
 
-        var speeds = new long[n + 2];
+        var speeds = new long[n + 1];
         var speedsInput = Console.ReadLine().Split().Select(el => long.Parse(el)).ToArray();
         Array.Copy(speedsInput, 0, speeds, 1, speedsInput.Count());
 
+        long inf = (long)1e18;
+        long[,] dp = new long[n + 1, k + 1];
 
-        long[,] dp = new long[n + 3, k + 3];
-
-        for (int i = 0; i <= n + 2; i++)
+        for (int i = 1; i <= n; i++)
         {
-            for (int j = 0; j <= k + 2; j++)
+            for (int j = 0; j <= k; j++)
             {
-                dp[i, j] = -1;
+                dp[i, j] = inf;
             }
         }
 
         dp[1, 0] = 0;
 
-        for (int i = 2; i < n + 2; i++)
+        for (int i = 2; i <= n; i++)
         {
-            dp[i, 0] = dp[i - 1, 0] + (signs[i] - signs[i - 1]) * speeds[i - 1];
+            dp[i, 0] = dp[i - 1, 0] + speeds[i - 1] * (signs[i] - signs[i - 1]);
 
-            for (int j = 1; j < k + 1; j++)
+            for (int j = 1; j <= k; j++)
             {
-                for (int p = i - 1; p > 0; p--)
+                long time = inf;
+                for (int pre = i - 1; pre >= 1; pre--)
                 {
-                    int removed = i - p - 1;
-
-                    if (removed <= j)
+                    int rem = j - (i - pre - 1);
+                    if (rem >= 0 && rem <= k)
                     {
-                        long time = dp[p, j - removed] + (signs[i] - signs[p]) * speeds[p];
-
-                        if (dp[i, j] == -1) dp[i, j] = time;
-                        else dp[i, j] = Math.Min(dp[i, j], time);
+                        time = Math.Min(time, dp[pre, rem] + speeds[pre] * (signs[i] - signs[pre]));
                     }
                 }
+                dp[i, j] = time;
             }
         }
 
-        long minimalTime = -1;
-
+        long minimalTime = inf;
         for (int i = 0; i <= k; i++)
         {
-            if (minimalTime == -1) minimalTime = dp[n + 1, i];
-            else minimalTime = Math.Min(minimalTime, dp[n + 1, i]);
+            for (int p = n; p >= 1; p--)
+            {
+                int rem = i - (n - p);
+                if (rem >= 0 && rem <= k)
+                {
+                    minimalTime = Math.Min(minimalTime, dp[p, rem] + speeds[p] * (l - signs[p]));
+                }
+            }
         }
 
         Console.WriteLine(minimalTime);

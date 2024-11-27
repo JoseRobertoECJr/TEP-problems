@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 
+// So passa em python RIP
 public static class Program
 {
     public static void Main()
@@ -10,29 +11,25 @@ public static class Program
         string s = Console.ReadLine();
         int n = s.Length;
 
-        List<int> prefix = new int[n+1].ToList();
-        List<int> sufix = new int[n+1].ToList();
-        char[] charArray = new char[n+1];
+        List<int> prefix = new int[n].ToList();
+        List<int> suffix = new int[n].ToList();
 
-        Array.Copy(s.ToCharArray(), 0, charArray, 1, n);
-
-        for (int i = 2; i <= n; i++)
+        for (int i = 1; i < n; i++)
         {
-            int sufixIndex = n - i + 1;
+            suffix[i] = suffix[i - 1] + (s[i] == 'v' && s[i - 1] == 'v' ? 1 : 0);
+        }
 
-            var oneMorePrefixW = charArray[i] == 'v' && charArray[i - 1] == 'v' ? 1 : 0;
-            var oneMoreSufixW = charArray[sufixIndex] == 'v' && charArray[sufixIndex + 1] == 'v' ? 1 : 0;
-
-            prefix[i] = prefix[i - 1] + oneMorePrefixW;
-            sufix[sufixIndex] = sufix[sufixIndex + 1] + oneMoreSufixW;
+        for (int i = n - 2; i >= 0; i--)
+        {
+            prefix[i] = prefix[i + 1] + (s[i] == 'v' && s[i + 1] == 'v' ? 1 : 0);
         }
 
         int wowFactor = 0;
-        for (int i = 3; i <= n - 2; i++)
+        for (int i = 0; i < n; i++)
         {
-            if (charArray[i] == 'o')
+            if (s[i] == 'o')
             {
-                wowFactor += (int)prefix[i - 1] * sufix[i + 1];
+                wowFactor += suffix[i] * prefix[i];
             }
         }
 
